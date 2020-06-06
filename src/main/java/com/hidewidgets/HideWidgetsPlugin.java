@@ -17,7 +17,6 @@ import javax.inject.Inject;
 @PluginDescriptor(
         name = "Hide Widgets",
         description = "Hides all widgets (Resizable only)",
-        enabledByDefault = false,
         tags = {}
 )
 @Slf4j
