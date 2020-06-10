@@ -1,7 +1,7 @@
 # Hide Widgets
 This plugin allows you to hide all the ui widgets in Oldschool Runescape when in resizable mode using a configurable hotkey.
 
-##Configuration Options
+## Configuration Options
   - Hide Widgets Toggle - Sets what key combination to use to enable/disable hind the widgets
     - Default: Ctrl + H
 
