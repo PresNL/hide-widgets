@@ -2,6 +2,8 @@
 
 This plugin allows you to hide all the ui widgets in Oldschool Runescape when in resizable mode using a configurable hotkey.
 
+[![Plugin at work](https://thumbs.gfycat.com/CloudyHopefulGoa-size_restricted.gif)](https://gfycat.com/cloudyhopefulgoa)
+
 ## Usage
 
 When in game press the hotkey (default ctrl + H) to hide all the runescape UI and when you want to turn it off press it again, if it doesn't work please double check you are in resizable mode:
@@ -17,5 +19,3 @@ When you open Runelite or disable and enable the plugin the toggle will always b
 ## Known issues
   - Runlite overlays are still shown
     - Workaround: Disable the plugins that are creating the overlay if you want the full clean look
-
-[![Plugin at work](https://thumbs.gfycat.com/CloudyHopefulGoa-size_restricted.gif)](https://gfycat.com/cloudyhopefulgoa)
