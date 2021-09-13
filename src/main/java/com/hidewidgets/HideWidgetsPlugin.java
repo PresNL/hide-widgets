@@ -133,6 +133,9 @@ public class HideWidgetsPlugin extends Plugin
             Widget zoom = client.getWidget(164, 2);
             if (zoom != null)
                 zoom.setHidden(false);
+            zoom = client.getWidget(161, 2);
+            if (zoom != null)
+                zoom.setHidden(false);
         }
 
     }
