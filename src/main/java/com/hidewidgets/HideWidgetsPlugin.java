@@ -37,6 +37,8 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.callback.ClientThread;
+import net.runelite.client.ui.overlay.OverlayManager;
 
 import javax.inject.Inject;
 
@@ -56,6 +58,12 @@ public class HideWidgetsPlugin extends Plugin
 
     @Inject
     private KeyManager keyManager;
+
+    @Inject
+    private ClientThread clientThread;
+
+    @Inject
+    private OverlayManager overlayManager;
 
     @Inject
     private HideWidgetsKeyboardListener hideWidgetsKeyboardListener;
@@ -109,6 +117,30 @@ public class HideWidgetsPlugin extends Plugin
         hideWidgets(hide);
     }
 
+    protected void hideWidgetChildren(Widget root, boolean hide)
+    {
+        // The normal GetChildren function seems to always return 0 so we get all the different types
+        // of other children instead and merge them into one array
+        Widget[] rootDynamicChildren = root.getDynamicChildren();
+        Widget[] rootNestedChildren = root.getNestedChildren();
+        Widget[] rootStaticChildren = root.getStaticChildren();
+
+        Widget[] rootChildren = new Widget[rootDynamicChildren.length + rootNestedChildren.length + rootStaticChildren.length];
+        System.arraycopy(rootDynamicChildren, 0, rootChildren,0 , rootDynamicChildren.length);
+        System.arraycopy(rootNestedChildren, 0, rootChildren,rootDynamicChildren.length , rootNestedChildren.length);
+        System.arraycopy(rootStaticChildren, 0, rootChildren,rootDynamicChildren.length + rootNestedChildren.length, rootStaticChildren.length);
+
+        if (rootChildren != null) {
+            for (Widget w : rootChildren) {
+                if (w != null) {
+                    // hiding the widget with content type 1337 prevents the game from rendering so let's not do that
+                    if (w.getContentType() != 1337)
+                        w.setHidden(hide);
+                }
+            }
+        }
+    }
+
     protected void hideWidgets(boolean hide)
     {
         // hiding in fixed mode does not actually hide stuff and might break stuff so let's not do that
@@ -118,24 +150,30 @@ public class HideWidgetsPlugin extends Plugin
         }
         else
         {
-            Widget[] root = client.getWidgetRoots();
-            for (Widget w : root)
+            clientThread.invokeLater(() ->
             {
-                if (w != null)
-                {
-                    // hiding the widget with content type 1337 prevents the game from rendering so let's not do that
-                    if (w.getContentType() != 1337)
-                        w.setHidden(hide);
-                }
-            }
+                // modern resizeable
+                Widget root = client.getWidget(164, 65);
+                if (root != null)
+                    hideWidgetChildren(root, hide);
 
-            // hiding this completely breaks scrolling to zoom
-            Widget zoom = client.getWidget(164, 2);
-            if (zoom != null)
-                zoom.setHidden(false);
-            zoom = client.getWidget(161, 2);
-            if (zoom != null)
-                zoom.setHidden(false);
+                // classic resizeable
+                root =  client.getWidget(161, 33);
+                if (root != null)
+                    hideWidgetChildren(root, hide);
+
+                // fix zoom modern resizeable
+                // zoom is child widget with the id 2 but if the parent is hidden the child is too
+                Widget zoom = client.getWidget(161, 90);
+                if (zoom != null)
+                    zoom.setHidden(false);
+
+                // fix zoom classic resizeable
+                // zoom is child widget with the id 2 but if the parent is hidden the child is too
+                zoom = client.getWidget(164, 87);
+                if (zoom != null)
+                    zoom.setHidden(false);
+            });
         }
 
     }
