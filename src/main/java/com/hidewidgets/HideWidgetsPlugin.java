@@ -117,6 +117,13 @@ public class HideWidgetsPlugin extends Plugin
         hideWidgets(hide);
     }
 
+    public void showWidgets()
+    {
+        if (!hide) { return; }
+        hide = false;
+        hideWidgets(false);
+    }
+
     protected void hideWidgetChildren(Widget root, boolean hide)
     {
         // The normal GetChildren function seems to always return 0 so we get all the different types

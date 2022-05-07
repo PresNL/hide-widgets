@@ -62,11 +62,28 @@ public class HideWidgetsKeyboardListener implements KeyListener
         {
             plugin.toggle();
         }
+
+        if (hideWidgetsConfig.showOnFKey() && isFKey(e))
+        {
+            plugin.showWidgets();
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e)
     {
 
+    }
+
+    private boolean isFKey(KeyEvent e)
+    {
+        for (int keyCode = KeyEvent.VK_F1; keyCode <= KeyEvent.VK_F12; keyCode++)
+        {
+            if (keyCode == e.getKeyCode())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

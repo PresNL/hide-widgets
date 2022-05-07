@@ -44,4 +44,15 @@ public interface HideWidgetsConfig extends Config
     {
         return new Keybind(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK);
     }
+
+    @ConfigItem(
+            position = 1,
+            keyName = "showOnFKey",
+            name = "Show when F key is pressed",
+            description = "Shows all widgets when F Key is pressed"
+    )
+    default boolean showOnFKey()
+    {
+        return false;
+    }
 }
