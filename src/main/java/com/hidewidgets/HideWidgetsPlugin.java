@@ -183,8 +183,23 @@ public class HideWidgetsPlugin extends Plugin
 						hideWidgetChildren(classicResizableParent, hide);
 					}
 				}
+
+				// fix zoom modern resizeable
+				// zoom is child widget with the id 2 but if the parent is hidden the child is too
+				Widget zoom = client.getWidget(161, 92);
+				if (zoom != null)
+				{
+					zoom.setHidden(false);
+				}
+
+				// fix zoom classic resizeable
+				// zoom is child widget with the id 2 but if the parent is hidden the child is too
+				zoom = client.getWidget(164, 89);
+				if (zoom != null)
+				{
+					zoom.setHidden(false);
+				}
 			});
 		}
-
 	}
 }
