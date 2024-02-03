@@ -26,11 +26,14 @@
 
 package com.hidewidgets;
 import com.google.inject.Provides;
+import java.awt.Component;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.ScriptID;
 import net.runelite.api.events.CanvasSizeChanged;
 import net.runelite.api.events.ScriptPostFired;
+import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.widgets.InterfaceID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -83,7 +86,9 @@ public class HideWidgetsPlugin extends Plugin
         if (scriptPostFired.getScriptId() == ScriptID.TOPLEVEL_REDRAW || scriptPostFired.getScriptId() == 903)
         {
             if (hide)
-                hideWidgets(true);
+			{
+				hideWidgets(true);
+			}
         }
     }
 
@@ -92,7 +97,9 @@ public class HideWidgetsPlugin extends Plugin
     {
         // hiding in fixed mode does not actually hide stuff and might break stuff so let's not do that
         if (!client.isResized())
-            hideWidgets(false);
+		{
+			hideWidgets(false);
+		}
     }
 
     @Override
@@ -153,26 +160,26 @@ public class HideWidgetsPlugin extends Plugin
             clientThread.invokeLater(() ->
             {
                 // modern resizeable
-                Widget root = client.getWidget(164, 65);
-                if (root != null)
-                    hideWidgetChildren(root, hide);
+                Widget modernResizableMinimap = client.getWidget(ComponentID.RESIZABLE_VIEWPORT_BOTTOM_LINE_MINIMAP);
+                if (modernResizableMinimap != null)
+				{
+					Widget modernResizableParent = modernResizableMinimap.getParent();
+					if (modernResizableParent != null)
+					{
+						hideWidgetChildren(modernResizableParent, hide);
+					}
+				}
 
                 // classic resizeable
-                root =  client.getWidget(161, 33);
-                if (root != null)
-                    hideWidgetChildren(root, hide);
-
-                // fix zoom modern resizeable
-                // zoom is child widget with the id 2 but if the parent is hidden the child is too
-                Widget zoom = client.getWidget(161, 90);
-                if (zoom != null)
-                    zoom.setHidden(false);
-
-                // fix zoom classic resizeable
-                // zoom is child widget with the id 2 but if the parent is hidden the child is too
-                zoom = client.getWidget(164, 87);
-                if (zoom != null)
-                    zoom.setHidden(false);
+                Widget classicResizableMinimap = client.getWidget(ComponentID.RESIZABLE_VIEWPORT_MINIMAP);
+                if (classicResizableMinimap != null)
+				{
+					Widget classicResizableParent = classicResizableMinimap.getParent();
+					if (classicResizableParent != null)
+					{
+						hideWidgetChildren(classicResizableParent, hide);
+					}
+				}
             });
         }
 
