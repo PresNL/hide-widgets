@@ -135,17 +135,14 @@ public class HideWidgetsPlugin extends Plugin
 		System.arraycopy(rootNestedChildren, 0, rootChildren, rootDynamicChildren.length, rootNestedChildren.length);
 		System.arraycopy(rootStaticChildren, 0, rootChildren, rootDynamicChildren.length + rootNestedChildren.length, rootStaticChildren.length);
 
-		if (rootChildren != null)
+		for (Widget w : rootChildren)
 		{
-			for (Widget w : rootChildren)
+			if (w != null)
 			{
-				if (w != null)
+				// hiding the widget with content type 1337 prevents the game from rendering so let's not do that
+				if (w.getContentType() != 1337)
 				{
-					// hiding the widget with content type 1337 prevents the game from rendering so let's not do that
-					if (w.getContentType() != 1337)
-					{
-						w.setHidden(hide);
-					}
+					w.setHidden(hide);
 				}
 			}
 		}
@@ -170,6 +167,21 @@ public class HideWidgetsPlugin extends Plugin
 					if (modernResizableParent != null)
 					{
 						hideWidgetChildren(modernResizableParent, hide);
+
+						// fix zoom modern resizeable
+						// zoom is child widget with the id 2 but if the parent is hidden the child is too
+						Widget[] staticChildren = modernResizableParent.getStaticChildren();
+						for (int i = 0; i < staticChildren.length; i++)
+						{
+							if (i == 1)
+							{
+								Widget zoom = staticChildren[1];
+								if (zoom != null)
+								{
+									zoom.setHidden(false);
+								}
+							}
+						}
 					}
 				}
 
@@ -181,23 +193,22 @@ public class HideWidgetsPlugin extends Plugin
 					if (classicResizableParent != null)
 					{
 						hideWidgetChildren(classicResizableParent, hide);
+
+						// fix zoom classic resizeable
+						// zoom is child widget with the id 2 but if the parent is hidden the child is too
+						Widget[] staticChildren = classicResizableMinimap.getStaticChildren();
+						for (int i = 0; i < staticChildren.length; i++)
+						{
+							if (i == 1)
+							{
+								Widget zoom = staticChildren[1];
+								if (zoom != null)
+								{
+									zoom.setHidden(false);
+								}
+							}
+						}
 					}
-				}
-
-				// fix zoom modern resizeable
-				// zoom is child widget with the id 2 but if the parent is hidden the child is too
-				Widget zoom = client.getWidget(161, 92);
-				if (zoom != null)
-				{
-					zoom.setHidden(false);
-				}
-
-				// fix zoom classic resizeable
-				// zoom is child widget with the id 2 but if the parent is hidden the child is too
-				zoom = client.getWidget(164, 89);
-				if (zoom != null)
-				{
-					zoom.setHidden(false);
 				}
 			});
 		}
