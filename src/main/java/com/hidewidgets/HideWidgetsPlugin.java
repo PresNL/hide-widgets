@@ -33,6 +33,7 @@ import net.runelite.api.Client;
 import net.runelite.api.ScriptID;
 import net.runelite.api.events.CanvasSizeChanged;
 import net.runelite.api.events.ScriptPostFired;
+import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
@@ -41,7 +42,6 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.ui.overlay.OverlayManager;
 
 @PluginDescriptor(
 	name = "Hide Widgets",
@@ -62,9 +62,6 @@ public class HideWidgetsPlugin extends Plugin
 
 	@Inject
 	private ClientThread clientThread;
-
-	@Inject
-	private OverlayManager overlayManager;
 
 	@Inject
 	private HideWidgetsKeyboardListener hideWidgetsKeyboardListener;
@@ -115,6 +112,26 @@ public class HideWidgetsPlugin extends Plugin
 		hideWidgets(false);
 	}
 
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged varbitChanged)
+	{
+		// https://oldschool.runescape.wiki/w/RuneScape:Varbit/6719
+		if (config.autoHideOnCutscene() && varbitChanged.getVarbitId() == 6719)
+		{
+			if (varbitChanged.getValue() == 2)
+			{
+				hideWidgets(true);
+				hide = true;
+			}
+
+			if (varbitChanged.getValue() == 0)
+			{
+				hideWidgets(false);
+				hide = false;
+			}
+		}
+	}
+
 	public void toggle()
 	{
 		log.debug("toggled hiding widgets");
@@ -142,6 +159,11 @@ public class HideWidgetsPlugin extends Plugin
 				// hiding the widget with content type 1337 prevents the game from rendering so let's not do that
 				if (w.getContentType() != 1337)
 				{
+					// classic resizable
+					if (config.autoHideOnCutscene() && w.getId() == 10551388)
+					{
+						continue;
+					}
 					w.setHidden(hide);
 				}
 			}

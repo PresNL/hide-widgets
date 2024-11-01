@@ -46,4 +46,15 @@ public interface HideWidgetsConfig extends Config
 	{
 		return new Keybind(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK);
 	}
+
+	@ConfigItem(
+		position = 1,
+		keyName = "autoHideOnCutscene",
+		name = "Hide widgets in cutscenes",
+		description = "Automatically hide in a cutscene"
+	)
+	default boolean autoHideOnCutscene()
+	{
+		return false;
+	}
 }
